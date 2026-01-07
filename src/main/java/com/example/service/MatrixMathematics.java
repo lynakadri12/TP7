@@ -1,4 +1,4 @@
-package main.java.com.example.service;
+package com.example.service;
 
 import com.example.exception.NoSquareException;
 import com.example.model.Matrix;

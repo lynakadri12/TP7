@@ -10,8 +10,6 @@ plugins {
     id 'java'
     id 'jacoco'
     id 'maven-publish'
-    //id("com.github.spacialcircumstances.gradle-cucumber-reporting") version "0.1.25"
-    // id("io.github.oleksiiparf.slack-webhook") version "1.0.0"
 }
 
 group = 'com.example'
@@ -23,14 +21,22 @@ repositories {
 }
 
 dependencies {
-    testImplementation 'io.cucumber:cucumber-java:6.0.0'
-    testImplementation 'io.cucumber:cucumber-junit:6.0.0'
-    testImplementation 'junit:junit:4.12'
+    testImplementation 'io.cucumber:cucumber-java:7.14.0'
+    testImplementation 'io.cucumber:cucumber-junit:7.14.0'
+    testImplementation 'junit:junit:4.13.2'
 
     // Jakarta Mail pour l'envoi d'emails
     implementation 'com.sun.mail:jakarta.mail:2.0.1'
 }
 
+// Configure the test task properly
+test {
+    systemProperty 'cucumber.publish.quiet', 'true'
+    testLogging {
+        events "passed", "skipped", "failed"
+        exceptionFormat "full"
+    }
+}
 
 publishing {
     repositories {
@@ -50,10 +56,5 @@ publishing {
         }
     }
 }
-
-
-
-
-
 
 test.finalizedBy("jacocoTestReport")
