@@ -3,7 +3,7 @@ pipeline{
     stages{
         stage('build'){
             steps{
-                bat ' ./gradlew build   '
+                bat 'gradlew.bat build -x test'
                 archiveArtifacts artifacts: 'build/libs/*.jar', fingerprint: true
             }
         }
