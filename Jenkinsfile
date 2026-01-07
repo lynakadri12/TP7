@@ -3,7 +3,7 @@ agent any
 stages{
 stage('build'){
 steps{
-bat './gradlew build'
+bat 'gradlew.bat build'
 archiveArtifacts artifacts: 'build/libs/*.jar', fingerprint: true
 }
 }
