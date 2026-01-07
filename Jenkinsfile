@@ -11,13 +11,10 @@ pipeline {
 
         stage('Test') {
             steps {
-                // 1. Lancement des tests unitaires
                 bat 'gradlew.bat test'
 
-                // 2. Archivage des résultats des tests unitaires
                 junit '**/build/test-results/test/*.xml'
 
-                // 3. Génération des rapports de tests Cucumber
                 publishHTML([
                     allowMissing: false,
                     alwaysLinkToLastBuild: true,

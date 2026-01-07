@@ -25,11 +25,9 @@ dependencies {
     testImplementation 'io.cucumber:cucumber-junit:7.14.0'
     testImplementation 'junit:junit:4.13.2'
 
-    // Jakarta Mail pour l'envoi d'emails
     implementation 'com.sun.mail:jakarta.mail:2.0.1'
 }
 
-// Configure the test task properly
 test {
     systemProperty 'cucumber.publish.quiet', 'true'
     testLogging {
