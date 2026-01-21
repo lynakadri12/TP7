@@ -37,7 +37,7 @@ pipeline {
             steps {
                 echo 'Running SonarCloud analysis...'
                 withCredentials([string(credentialsId: 'sonarcloud-token', variable: 'SONAR_TOKEN')]) {
-                bat 'gradlew.bat sonarqube -Dsonar.login=%SONAR_TOKEN%'
+                    bat 'gradlew.bat sonar -Dsonar.token=%SONAR_TOKEN%'
                 }
             }
         }
