@@ -40,7 +40,7 @@ pipeline {
                     bat 'gradlew.bat sonar -Dsonar.projectKey=lynakadri12_TP7 -Dsonar.organization=lynakadri12 -Dsonar.host.url=https://sonarcloud.io -Dsonar.token=%SONAR_TOKEN%'
                 }
             }
-
+}
 
         // Phase 3: Code Quality (Quality Gates)
         stage('Code Quality') {
