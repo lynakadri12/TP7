@@ -56,7 +56,7 @@ jacocoTestReport {
 // Configuration SonarQube
 sonarqube {
     properties {
-        property "sonar.projectKey", "lynakadri12_TP7"
+        property "sonar.projectKey", "TP7"
         property "sonar.organization", "lynakadri12"
         property "sonar.host.url", "https://sonarcloud.io"
         property "sonar.sources", "src/main/java"
