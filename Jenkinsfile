@@ -37,7 +37,7 @@ pipeline {
         stage('Code Analysis') {
             steps {
                 echo 'Running SonarCloud analysis...'
-                withCredentials([string(credentialsId: 'sonarcloud-token', variable: 'SONAR_TOKEN')]) {
+                withCredentials([string(credentialsId: 'sonar-token', variable: 'SONAR_TOKEN')]) {
                     bat """
                         gradlew.bat sonar ^
                         -Dsonar.projectKey=lynakadri12_TP7 ^
