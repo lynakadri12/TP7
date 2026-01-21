@@ -37,10 +37,11 @@ pipeline {
             steps {
                 echo 'Running SonarCloud analysis...'
                 withCredentials([string(credentialsId: 'sonarcloud-token', variable: 'SONAR_TOKEN')]) {
-                    bat './gradlew.bat -Dsonar.projectKey=lynakadri12_TP7 -Dsonar.organization=lynakadri12 -Dsonar.host.url=https://sonarcloud.io -Dsonar.token=%SONAR_TOKEN% sonar'
+                    bat 'gradlew.bat sonar -Dsonar.login=%SONAR_TOKEN%'
                 }
             }
-}
+        }
+
 
         // Phase 3: Code Quality (Quality Gates)
         stage('Code Quality') {
