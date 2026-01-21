@@ -35,14 +35,9 @@ pipeline {
         // Phase 2: Code Analysis
         stage('Code Analysis') {
             steps {
-                echo 'Running SonarQube analysis...'
-                withSonarQubeEnv('SonarQube') {
-                    bat """
-                        gradlew.bat sonar ^
-                        -Dsonar.projectKey=lynakadri12_TP7 ^
-                        -Dsonar.organization=lynakadri12 ^
-                        -Dsonar.host.url=https://sonarcloud.io
-                    """
+                echo 'Running SonarCloud analysis...'
+                withSonarQubeEnv('sonar') {
+                    bat 'gradlew.bat sonar'
                 }
             }
         }
@@ -98,7 +93,7 @@ pipeline {
 
             // Notification par email
             emailext(
-                subject: " Jenkins Build SUCCESS: ${env.JOB_NAME} - Build #${env.BUILD_NUMBER}",
+                subject: "✅ Jenkins Build SUCCESS: ${env.JOB_NAME} - Build #${env.BUILD_NUMBER}",
                 body: """
                     <h2>Build Successful!</h2>
                     <p><strong>Job:</strong> ${env.JOB_NAME}</p>
@@ -110,7 +105,11 @@ pipeline {
                 to: 'votre-email@example.com'
             )
 
-
+            // Notification Slack (optionnel - nécessite le plugin Slack)
+            // slackSend(
+            //     color: 'good',
+            //     message: "✅ Build SUCCESS: ${env.JOB_NAME} #${env.BUILD_NUMBER}\n<${env.BUILD_URL}|View Build>"
+            // )
         }
 
         failure {
@@ -118,7 +117,7 @@ pipeline {
 
             // Notification par email en cas d'échec
             emailext(
-                subject: " Jenkins Build FAILED: ${env.JOB_NAME} - Build #${env.BUILD_NUMBER}",
+                subject: "❌ Jenkins Build FAILED: ${env.JOB_NAME} - Build #${env.BUILD_NUMBER}",
                 body: """
                     <h2>Build Failed!</h2>
                     <p><strong>Job:</strong> ${env.JOB_NAME}</p>
@@ -128,10 +127,14 @@ pipeline {
                     <p>Veuillez vérifier les logs pour plus de détails.</p>
                 """,
                 mimeType: 'text/html',
-                to: 'll_kadri@esi.dz'
+                to: 'votre-email@example.com'
             )
 
-
+            // Notification Slack (optionnel)
+            // slackSend(
+            //     color: 'danger',
+            //     message: "❌ Build FAILED: ${env.JOB_NAME} #${env.BUILD_NUMBER}\n<${env.BUILD_URL}|View Build>"
+            // )
         }
     }
 }
