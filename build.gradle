@@ -11,7 +11,7 @@ plugins {
     id 'java'
     id 'jacoco'
     id 'maven-publish'
-    id 'org.sonarqube' version '5.1.0.4882'
+    id "org.sonarqube" version "7.2.2.6593"
 }
 
 group = 'com.example'
@@ -56,15 +56,13 @@ jacocoTestReport {
 // Configuration SonarQube
 sonarqube {
     properties {
-        property "sonar.projectKey", "tp7-project"
-        property "sonar.projectName", "TP7 Project"
-        property "sonar.host.url", "http://localhost:9000"
+        property "sonar.projectKey", "lynakadri12_TP7"
+        property "sonar.organization", "lynakadri12"
+        property "sonar.host.url", "https://sonarcloud.io"
         property "sonar.sources", "src/main/java"
         property "sonar.tests", "src/test/java"
         property "sonar.java.binaries", "build/classes/java/main"
-        property "sonar.java.test.binaries", "build/classes/java/test"
         property "sonar.coverage.jacoco.xmlReportPaths", "build/reports/jacoco/test/jacocoTestReport.xml"
-        property "sonar.junit.reportPaths", "build/test-results/test"
     }
 }
 
