@@ -39,7 +39,7 @@ pipeline {
                 withCredentials([string(credentialsId: 'sonarcloud-token', variable: 'SONAR_TOKEN')]) {
                     script {
                         bat """
-                            gradlew.bat sonar -Dsonar.token=%SONAR_TOKEN%
+                            ./gradlew.bat sonar -Dsonar.token=%SONAR_TOKEN%
                         """
                     }
                 }
