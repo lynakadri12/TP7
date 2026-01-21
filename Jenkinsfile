@@ -2,6 +2,15 @@ pipeline {
     agent any
 
     stages {
+        // Phase 0: Clean Workspace
+        stage('Clean Workspace') {
+            steps {
+                echo 'Cleaning workspace...'
+                deleteDir()
+                checkout scm
+            }
+        }
+
         // Phase 1: Test
         stage('Test') {
             steps {
@@ -37,11 +46,7 @@ pipeline {
             steps {
                 echo 'Running SonarCloud analysis...'
                 withCredentials([string(credentialsId: 'sonarcloud-token', variable: 'SONAR_TOKEN')]) {
-                    script {
-                        bat """
-                            ./gradlew.bat sonar -Dsonar.token=%SONAR_TOKEN%
-                        """
-                    }
+                    bat 'gradlew.bat sonar "-Dsonar.projectKey=lynakadri12_TP7" "-Dsonar.organization=lynakadri12" "-Dsonar.host.url=https://sonarcloud.io" "-Dsonar.token=%SONAR_TOKEN%"'
                 }
             }
         }
