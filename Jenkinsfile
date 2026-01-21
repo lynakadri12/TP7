@@ -45,8 +45,10 @@ pipeline {
         stage('Code Analysis') {
             steps {
                 echo 'Running SonarCloud analysis...'
-                withCredentials([string(credentialsId: 'sonarcloud-token', variable: 'SONAR_TOKEN')]) {
-                    bat 'gradlew.bat sonar "-Dsonar.projectKey=lynakadri12_TP7" "-Dsonar.organization=lynakadri12" "-Dsonar.host.url=https://sonarcloud.io" "-Dsonar.token=%SONAR_TOKEN%"'
+                withSonarQubeEnv('SonarCloud') {
+                    withCredentials([string(credentialsId: 'sonarcloud-token', variable: 'SONAR_TOKEN')]) {
+                        bat 'gradlew.bat sonar "-Dsonar.projectKey=lynakadri12_TP7" "-Dsonar.organization=lynakadri12" "-Dsonar.host.url=https://sonarcloud.io" "-Dsonar.token=%SONAR_TOKEN%"'
+                    }
                 }
             }
         }
