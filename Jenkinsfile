@@ -33,11 +33,18 @@ pipeline {
         }
 
         // Phase 2: Code Analysis
+        // Phase 2: Code Analysis
         stage('Code Analysis') {
             steps {
                 echo 'Running SonarCloud analysis...'
-                withSonarQubeEnv('sonar') {
-                    bat 'gradlew.bat sonar'
+                withCredentials([string(credentialsId: 'sonarcloud-token', variable: 'SONAR_TOKEN')]) {
+                    bat """
+                        gradlew.bat sonar ^
+                        -Dsonar.projectKey=lynakadri12_TP7 ^
+                        -Dsonar.organization=lynakadri12 ^
+                        -Dsonar.host.url=https://sonarcloud.io ^
+                        -Dsonar.token=%SONAR_TOKEN%
+                    """
                 }
             }
         }
