@@ -2,6 +2,14 @@ pipeline {
     agent any
 
     stages {
+        // Phase 0: Clean Workspace
+        stage('Clean Workspace') {
+            steps {
+                echo 'Cleaning workspace...'
+                deleteDir()
+                checkout scm
+            }
+        }
 
         // Phase 1: Test
         stage('Test') {
