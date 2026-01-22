@@ -136,7 +136,7 @@ pipeline {
                     <p>Veuillez vérifier les logs pour plus de détails.</p>
                 """,
                 mimeType: 'text/html',
-                to: 'votre-email@example.com'
+                to: 'kadrilyna7@gmail.com'
             )
 
             // Notification Slack (optionnel)
