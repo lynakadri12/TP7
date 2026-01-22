@@ -30,7 +30,7 @@ pipeline {
                     reportName: 'Test Report'
                 ])
 
-                // Génération des rapports Cucumber (si vous avez des tests Cucumber)
+                // Génération des rapports Cucumber
                 cucumber buildStatus: 'UNSTABLE',
                     reportTitle: 'Cucumber Report',
                     fileIncludePattern: '**/*.json',
@@ -108,6 +108,8 @@ pipeline {
                     <p><strong>Job:</strong> ${env.JOB_NAME}</p>
                     <p><strong>Build Number:</strong> ${env.BUILD_NUMBER}</p>
                     <p><strong>Build URL:</strong> <a href="${env.BUILD_URL}">${env.BUILD_URL}</a></p>
+                    <p><strong>Branche:</strong> ${env.BRANCH_NAME}</p>
+                    <p><strong>Commit:</strong> ${env.GIT_COMMIT}</p>
                     <p>Le déploiement a été effectué avec succès sur MyMavenRepo.</p>
                 """,
                 mimeType: 'text/html',
@@ -121,8 +123,62 @@ pipeline {
             )
         }
 
+        failure {
+            echo 'Pipeline failed! Sending notifications...'
 
+            // Notification par email
+            emailext(
+                subject: "Jenkins Build FAILED: ${env.JOB_NAME} - Build #${env.BUILD_NUMBER}",
+                body: """
+                    <h2>Build Failed!</h2>
+                    <p><strong>Job:</strong> ${env.JOB_NAME}</p>
+                    <p><strong>Build Number:</strong> ${env.BUILD_NUMBER}</p>
+                    <p><strong>Build URL:</strong> <a href="${env.BUILD_URL}">${env.BUILD_URL}</a></p>
+                    <p><strong>Branche:</strong> ${env.BRANCH_NAME}</p>
+                    <p><strong>Commit:</strong> ${env.GIT_COMMIT}</p>
+                    <p style="color: red;">Le pipeline a échoué. Veuillez consulter les logs pour plus de détails.</p>
+                    <p><a href="${env.BUILD_URL}console">Voir les logs complets</a></p>
+                """,
+                mimeType: 'text/html',
+                to: 'kadrilyna7@gmail.com'
+            )
 
+            // Notification Slack
+            slackSend(
+                color: 'danger',
+                message: " Build FAILED: ${env.JOB_NAME} #${env.BUILD_NUMBER}\n<${env.BUILD_URL}|View Build>"
+            )
+        }
 
+        unstable {
+            echo 'Pipeline is unstable! Sending notifications...'
+
+            // Notification par email
+            emailext(
+                subject: " Jenkins Build UNSTABLE: ${env.JOB_NAME} - Build #${env.BUILD_NUMBER}",
+                body: """
+                    <h2>Build Unstable!</h2>
+                    <p><strong>Job:</strong> ${env.JOB_NAME}</p>
+                    <p><strong>Build Number:</strong> ${env.BUILD_NUMBER}</p>
+                    <p><strong>Build URL:</strong> <a href="${env.BUILD_URL}">${env.BUILD_URL}</a></p>
+                    <p><strong>Branche:</strong> ${env.BRANCH_NAME}</p>
+                    <p><strong>Commit:</strong> ${env.GIT_COMMIT}</p>
+                    <p style="color: orange;">Le pipeline est instable. Des tests ont peut-être échoué.</p>
+                    <p><a href="${env.BUILD_URL}console">Voir les logs complets</a></p>
+                """,
+                mimeType: 'text/html',
+                to: 'kadrilyna7@gmail.com'
+            )
+
+            // Notification Slack
+            slackSend(
+                color: 'warning',
+                message: " Build UNSTABLE: ${env.JOB_NAME} #${env.BUILD_NUMBER}\n<${env.BUILD_URL}|View Build>"
+            )
+        }
+
+        always {
+            echo 'Pipeline execution completed.'
+        }
     }
 }
