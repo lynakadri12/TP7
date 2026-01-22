@@ -81,70 +81,72 @@ pipeline {
             }
         }
 
-        // Phase 6: Notification
-        stage('Notification') {
-            steps {
-                script {
-                    if (currentBuild.currentResult == 'SUCCESS') {
+       // Phase 6: Notification
+       stage('Notification') {
+           steps {
+               script {
+                   if (currentBuild.currentResult == 'SUCCESS') {
 
-                        emailext(
-                            subject: "Jenkins Build SUCCESS: ${env.JOB_NAME} - Build #${env.BUILD_NUMBER}",
-                            body: """
-                                <h2>Build Successful!</h2>
-                                <p><strong>Job:</strong> ${env.JOB_NAME}</p>
-                                <p><strong>Build Number:</strong> ${env.BUILD_NUMBER}</p>
-                                <p><strong>Build URL:</strong>
-                                <a href="${env.BUILD_URL}">${env.BUILD_URL}</a></p>
-                                <p>Le déploiement a été effectué avec succès sur MyMavenRepo.</p>
-                            """,
-                            mimeType: 'text/html',
-                            to: 'kadrilyna7@gmail.com'
-                        )
+                       emailext(
+                           subject: "Jenkins Build SUCCESS: ${env.JOB_NAME} - Build #${env.BUILD_NUMBER}",
+                           body: """
+                               <h2>Build Successful!</h2>
+                               <p><strong>Job:</strong> ${env.JOB_NAME}</p>
+                               <p><strong>Build Number:</strong> ${env.BUILD_NUMBER}</p>
+                               <p><strong>Build URL:</strong>
+                               <a href="${env.BUILD_URL}">${env.BUILD_URL}</a></p>
+                               <p>Le déploiement a été effectué avec succès sur MyMavenRepo.</p>
+                           """,
+                           mimeType: 'text/html',
+                           to: 'kadrilyna7@gmail.com'
+                       )
 
-                        slackSend(
-                            color: 'good',
-                            message: "Build SUCCESS: ${env.JOB_NAME} #${env.BUILD_NUMBER}\n<${env.BUILD_URL}|View Build>"
-                        )
+                       slackSend(
+                           tokenCredentialId: 'slack-token-new',
+                           color: 'good',
+                           message: "Build SUCCESS: ${env.JOB_NAME} #${env.BUILD_NUMBER}\n<${env.BUILD_URL}|View Build>"
+                       )
 
-                    } else if (currentBuild.currentResult == 'UNSTABLE') {
+                   } else if (currentBuild.currentResult == 'UNSTABLE') {
 
-                        emailext(
-                            subject: "Jenkins Build UNSTABLE: ${env.JOB_NAME} - Build #${env.BUILD_NUMBER}",
-                            body: """
-                                <h2>Build Unstable!</h2>
-                                <p>Certains tests ont échoué.</p>
-                                <p><a href="${env.BUILD_URL}">Voir le build</a></p>
-                            """,
-                            mimeType: 'text/html',
-                            to: 'kadrilyna7@gmail.com'
-                        )
+                       emailext(
+                           subject: "Jenkins Build UNSTABLE: ${env.JOB_NAME} - Build #${env.BUILD_NUMBER}",
+                           body: """
+                               <h2>Build Unstable!</h2>
+                               <p>Certains tests ont échoué.</p>
+                               <p><a href="${env.BUILD_URL}">Voir le build</a></p>
+                           """,
+                           mimeType: 'text/html',
+                           to: 'kadrilyna7@gmail.com'
+                       )
 
-                        slackSend(
-                            color: 'warning',
-                            message: "Build UNSTABLE: ${env.JOB_NAME} #${env.BUILD_NUMBER}"
-                        )
+                       slackSend(
+                           tokenCredentialId: 'slack-token-new',
+                           color: 'warning',
+                           message: "Build UNSTABLE: ${env.JOB_NAME} #${env.BUILD_NUMBER}"
+                       )
 
-                    } else {
+                   } else {
 
-                        emailext(
-                            subject: "Jenkins Build FAILED: ${env.JOB_NAME} - Build #${env.BUILD_NUMBER}",
-                            body: """
-                                <h2>Build Failed!</h2>
-                                <p>Le pipeline a échoué.</p>
-                                <p><a href="${env.BUILD_URL}console">Voir les logs</a></p>
-                            """,
-                            mimeType: 'text/html',
-                            to: 'kadrilyna7@gmail.com'
-                        )
+                       emailext(
+                           subject: "Jenkins Build FAILED: ${env.JOB_NAME} - Build #${env.BUILD_NUMBER}",
+                           body: """
+                               <h2>Build Failed!</h2>
+                               <p>Le pipeline a échoué.</p>
+                               <p><a href="${env.BUILD_URL}console">Voir les logs</a></p>
+                           """,
+                           mimeType: 'text/html',
+                           to: 'kadrilyna7@gmail.com'
+                       )
 
-                        slackSend(
-                            tokenCredentialId: 'slack-token',
-                            color: 'warning',
-                            message: "Build UNSTABLE: ${env.JOB_NAME} #${env.BUILD_NUMBER}"
-                        )
-                    }
-                }
-            }
-        }
+                       slackSend(
+                           tokenCredentialId: 'slack-token-new',
+                           color: 'danger',
+                           message: "Build FAILED: ${env.JOB_NAME} #${env.BUILD_NUMBER}\n<${env.BUILD_URL}console|View Console>"
+                       )
+                   }
+               }
+           }
+       }
     }
 }
