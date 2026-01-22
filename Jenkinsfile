@@ -111,7 +111,7 @@ pipeline {
                     <p>Le déploiement a été effectué avec succès sur MyMavenRepo.</p>
                 """,
                 mimeType: 'text/html',
-                to: 'kadrilyna7@gmail.com' // Remplacez par votre vraie adresse email
+                to: 'kadrilyna7@gmail.com'
             )
 
             // Notification Slack
@@ -136,13 +136,14 @@ pipeline {
                     <p>Veuillez vérifier les logs pour plus de détails.</p>
                 """,
                 mimeType: 'text/html',
-                to: 'kadrilyna7@gmail.com' // Remplacez par votre vraie adresse email
-)
-            // Notification Slack (optionnel)
-            // slackSend(
-            //     color: 'danger',
-            //     message: " Build FAILED: ${env.JOB_NAME} #${env.BUILD_NUMBER}\n<${env.BUILD_URL}|View Build>"
-            // )
+                to: 'kadrilyna7@gmail.com'
+            )
+
+            // Notification Slack
+            slackSend(
+                color: 'danger',
+                message: " Build FAILED: ${env.JOB_NAME} #${env.BUILD_NUMBER}\n<${env.BUILD_URL}|View Build>"
+            )
         }
     }
 }
