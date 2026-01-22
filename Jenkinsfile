@@ -2,14 +2,6 @@ pipeline {
     agent any
 
     stages {
-        // Phase 0: Clean Workspace
-        stage('Clean Workspace') {
-            steps {
-                echo 'Cleaning workspace...'
-                deleteDir()
-                checkout scm
-            }
-        }
 
         // Phase 1: Test
         stage('Test') {
@@ -17,10 +9,8 @@ pipeline {
                 echo 'Running unit tests...'
                 bat 'gradlew.bat test'
 
-                // Archivage des résultats des tests unitaires
                 junit '**/build/test-results/test/*.xml'
 
-                // Génération des rapports de tests
                 publishHTML([
                     allowMissing: false,
                     alwaysLinkToLastBuild: true,
@@ -30,14 +20,13 @@ pipeline {
                     reportName: 'Test Report'
                 ])
 
-                // Génération des rapports Cucumber
                 cucumber buildStatus: 'UNSTABLE',
-                    reportTitle: 'Cucumber Report',
-                    fileIncludePattern: '**/*.json',
-                    trendsLimit: 10,
-                    classifications: [
-                        [key: 'Browser', value: 'N/A']
-                    ]
+                        reportTitle: 'Cucumber Report',
+                        fileIncludePattern: '**/*.json',
+                        trendsLimit: 10,
+                        classifications: [
+                            [key: 'Browser', value: 'N/A']
+                        ]
             }
         }
 
@@ -51,7 +40,7 @@ pipeline {
             }
         }
 
-        // Phase 3: Code Quality (Quality Gates)
+        // Phase 3: Code Quality
         stage('Code Quality') {
             steps {
                 echo 'Checking Quality Gates...'
@@ -67,11 +56,9 @@ pipeline {
                 echo 'Building JAR file...'
                 bat 'gradlew.bat clean build -x test'
 
-                // Génération de la documentation
                 echo 'Generating Javadoc...'
                 bat 'gradlew.bat javadoc'
 
-                // Archivage du fichier JAR et de la documentation
                 archiveArtifacts artifacts: 'build/libs/*.jar', fingerprint: true
                 archiveArtifacts artifacts: 'build/docs/javadoc/**/*', fingerprint: true
 
@@ -93,121 +80,70 @@ pipeline {
                 bat 'gradlew.bat publish'
             }
         }
-    }
 
-    // Phase 6: Notification
-    post {
-        success {
-            script {
-                echo 'Pipeline succeeded! Sending notifications...'
+        // Phase 6: Notification
+        stage('Notification') {
+            steps {
+                script {
+                    if (currentBuild.currentResult == 'SUCCESS') {
 
-                try {
-                    // Notification par email
-                    emailext(
-                        subject: " Jenkins Build SUCCESS: ${env.JOB_NAME} - Build #${env.BUILD_NUMBER}",
-                        body: """
-                            <h2>Build Successful!</h2>
-                            <p><strong>Job:</strong> ${env.JOB_NAME}</p>
-                            <p><strong>Build Number:</strong> ${env.BUILD_NUMBER}</p>
-                            <p><strong>Build URL:</strong> <a href="${env.BUILD_URL}">${env.BUILD_URL}</a></p>
-                            <p>Le déploiement a été effectué avec succès sur MyMavenRepo.</p>
-                        """,
-                        mimeType: 'text/html',
-                        to: 'kadrilyna7@gmail.com'
-                    )
-                    echo 'Email notification sent successfully'
-                } catch (Exception e) {
-                    echo "Failed to send email: ${e.message}"
-                }
+                        emailext(
+                            subject: "Jenkins Build SUCCESS: ${env.JOB_NAME} - Build #${env.BUILD_NUMBER}",
+                            body: """
+                                <h2>Build Successful!</h2>
+                                <p><strong>Job:</strong> ${env.JOB_NAME}</p>
+                                <p><strong>Build Number:</strong> ${env.BUILD_NUMBER}</p>
+                                <p><strong>Build URL:</strong>
+                                <a href="${env.BUILD_URL}">${env.BUILD_URL}</a></p>
+                                <p>Le déploiement a été effectué avec succès sur MyMavenRepo.</p>
+                            """,
+                            mimeType: 'text/html',
+                            to: 'kadrilyna7@gmail.com'
+                        )
 
-                try {
-                    // Notification Slack
-                    slackSend(
-                        color: 'good',
-                        message: " Build SUCCESS: ${env.JOB_NAME} #${env.BUILD_NUMBER}\n<${env.BUILD_URL}|View Build>"
-                    )
-                    echo 'Slack notification sent successfully'
-                } catch (Exception e) {
-                    echo "Failed to send Slack notification: ${e.message}"
-                }
-            }
-        }
+                        slackSend(
+                            color: 'good',
+                            message: "Build SUCCESS: ${env.JOB_NAME} #${env.BUILD_NUMBER}\n<${env.BUILD_URL}|View Build>"
+                        )
 
-        failure {
-            script {
-                echo 'Pipeline failed! Sending notifications...'
+                    } else if (currentBuild.currentResult == 'UNSTABLE') {
 
-                try {
-                    // Notification par email
-                    emailext(
-                        subject: " Jenkins Build FAILED: ${env.JOB_NAME} - Build #${env.BUILD_NUMBER}",
-                        body: """
-                            <h2>Build Failed!</h2>
-                            <p><strong>Job:</strong> ${env.JOB_NAME}</p>
-                            <p><strong>Build Number:</strong> ${env.BUILD_NUMBER}</p>
-                            <p><strong>Build URL:</strong> <a href="${env.BUILD_URL}">${env.BUILD_URL}</a></p>
-                            <p style="color: red;">Le pipeline a échoué. Veuillez consulter les logs pour plus de détails.</p>
-                            <p><a href="${env.BUILD_URL}console">Voir les logs complets</a></p>
-                        """,
-                        mimeType: 'text/html',
-                        to: 'kadrilyna7@gmail.com'
-                    )
-                    echo 'Email notification sent successfully'
-                } catch (Exception e) {
-                    echo "Failed to send email: ${e.message}"
-                }
+                        emailext(
+                            subject: "Jenkins Build UNSTABLE: ${env.JOB_NAME} - Build #${env.BUILD_NUMBER}",
+                            body: """
+                                <h2>Build Unstable!</h2>
+                                <p>Certains tests ont échoué.</p>
+                                <p><a href="${env.BUILD_URL}">Voir le build</a></p>
+                            """,
+                            mimeType: 'text/html',
+                            to: 'kadrilyna7@gmail.com'
+                        )
 
-                try {
-                    // Notification Slack
-                    slackSend(
-                        color: 'danger',
-                        message: " Build FAILED: ${env.JOB_NAME} #${env.BUILD_NUMBER}\n<${env.BUILD_URL}|View Build>"
-                    )
-                    echo 'Slack notification sent successfully'
-                } catch (Exception e) {
-                    echo "Failed to send Slack notification: ${e.message}"
+                        slackSend(
+                            color: 'warning',
+                            message: "Build UNSTABLE: ${env.JOB_NAME} #${env.BUILD_NUMBER}"
+                        )
+
+                    } else {
+
+                        emailext(
+                            subject: "Jenkins Build FAILED: ${env.JOB_NAME} - Build #${env.BUILD_NUMBER}",
+                            body: """
+                                <h2>Build Failed!</h2>
+                                <p>Le pipeline a échoué.</p>
+                                <p><a href="${env.BUILD_URL}console">Voir les logs</a></p>
+                            """,
+                            mimeType: 'text/html',
+                            to: 'kadrilyna7@gmail.com'
+                        )
+
+                        slackSend(
+                            color: 'danger',
+                            message: "Build FAILED: ${env.JOB_NAME} #${env.BUILD_NUMBER}"
+                        )
+                    }
                 }
             }
-        }
-
-        unstable {
-            script {
-                echo 'Pipeline is unstable! Sending notifications...'
-
-                try {
-                    // Notification par email
-                    emailext(
-                        subject: "Jenkins Build UNSTABLE: ${env.JOB_NAME} - Build #${env.BUILD_NUMBER}",
-                        body: """
-                            <h2>Build Unstable!</h2>
-                            <p><strong>Job:</strong> ${env.JOB_NAME}</p>
-                            <p><strong>Build Number:</strong> ${env.BUILD_NUMBER}</p>
-                            <p><strong>Build URL:</strong> <a href="${env.BUILD_URL}">${env.BUILD_URL}</a></p>
-                            <p style="color: orange;">Le pipeline est instable. Des tests ont peut-être échoué.</p>
-                        """,
-                        mimeType: 'text/html',
-                        to: 'kadrilyna7@gmail.com'
-                    )
-                    echo 'Email notification sent successfully'
-                } catch (Exception e) {
-                    echo "Failed to send email: ${e.message}"
-                }
-
-                try {
-                    // Notification Slack
-                    slackSend(
-                        color: 'warning',
-                        message: " Build UNSTABLE: ${env.JOB_NAME} #${env.BUILD_NUMBER}\n<${env.BUILD_URL}|View Build>"
-                    )
-                    echo 'Slack notification sent successfully'
-                } catch (Exception e) {
-                    echo "Failed to send Slack notification: ${e.message}"
-                }
-            }
-        }
-
-        always {
-            echo 'Pipeline execution completed.'
         }
     }
 }
