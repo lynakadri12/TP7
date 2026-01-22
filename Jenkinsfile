@@ -102,7 +102,7 @@ pipeline {
 
             // Notification par email
             emailext(
-                subject: "✅ Jenkins Build SUCCESS: ${env.JOB_NAME} - Build #${env.BUILD_NUMBER}",
+                subject: " Jenkins Build SUCCESS: ${env.JOB_NAME} - Build #${env.BUILD_NUMBER}",
                 body: """
                     <h2>Build Successful!</h2>
                     <p><strong>Job:</strong> ${env.JOB_NAME}</p>
@@ -111,14 +111,13 @@ pipeline {
                     <p>Le déploiement a été effectué avec succès sur MyMavenRepo.</p>
                 """,
                 mimeType: 'text/html',
-                to: 'votre-email@example.com'
+                to: 'kadrilyna7@gmail.com'
             )
 
-            // Notification Slack (optionnel - nécessite le plugin Slack)
-            // slackSend(
-            //     color: 'good',
-            //     message: "✅ Build SUCCESS: ${env.JOB_NAME} #${env.BUILD_NUMBER}\n<${env.BUILD_URL}|View Build>"
-            // )
+             slackSend(
+               color: 'good',
+               message: " Build SUCCESS: ${env.JOB_NAME} #${env.BUILD_NUMBER}\n<${env.BUILD_URL}|View Build>"
+            )
         }
 
         failure {
@@ -126,7 +125,7 @@ pipeline {
 
             // Notification par email en cas d'échec
             emailext(
-                subject: "❌ Jenkins Build FAILED: ${env.JOB_NAME} - Build #${env.BUILD_NUMBER}",
+                subject: " Jenkins Build FAILED: ${env.JOB_NAME} - Build #${env.BUILD_NUMBER}",
                 body: """
                     <h2>Build Failed!</h2>
                     <p><strong>Job:</strong> ${env.JOB_NAME}</p>
@@ -139,11 +138,10 @@ pipeline {
                 to: 'kadrilyna7@gmail.com'
             )
 
-            // Notification Slack (optionnel)
-            // slackSend(
-            //     color: 'danger',
-            //     message: "❌ Build FAILED: ${env.JOB_NAME} #${env.BUILD_NUMBER}\n<${env.BUILD_URL}|View Build>"
-            // )
+             slackSend(
+                color: 'danger',
+                message: " Build FAILED: ${env.JOB_NAME} #${env.BUILD_NUMBER}\n<${env.BUILD_URL}|View Build>"
+             )
         }
     }
 }
