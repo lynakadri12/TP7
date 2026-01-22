@@ -17,7 +17,7 @@ plugins {
 sonar {
     properties {
         property "sonar.projectKey", "lynakadri12_TP7"
-        property "sonar.organization", "lynakadri12"
+        property "sonar.host.url", "http://localhost:9000"
     }
 }
 
