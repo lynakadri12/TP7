@@ -124,7 +124,7 @@ pipeline {
                       slackSend(
                           tokenCredentialId: 'slack-token-new',
                           channel: '#tp-ogl',
-                          color: 'warning',
+                          color: 'good',
                           message: "Build UNSTABLE: ${env.JOB_NAME} #${env.BUILD_NUMBER}\n<${env.BUILD_URL}|View Build>"
                       )
 
