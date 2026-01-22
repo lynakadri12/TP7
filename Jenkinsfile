@@ -121,29 +121,6 @@ pipeline {
             )
         }
 
-        failure {
-            echo 'Pipeline failed! Sending notifications...'
 
-            // Notification par email en cas d'échec
-            emailext(
-                subject: " Jenkins Build FAILED: ${env.JOB_NAME} - Build #${env.BUILD_NUMBER}",
-                body: """
-                    <h2>Build Failed!</h2>
-                    <p><strong>Job:</strong> ${env.JOB_NAME}</p>
-                    <p><strong>Build Number:</strong> ${env.BUILD_NUMBER}</p>
-                    <p><strong>Build URL:</strong> <a href="${env.BUILD_URL}">${env.BUILD_URL}</a></p>
-                    <p><strong>Console Output:</strong> <a href="${env.BUILD_URL}console">${env.BUILD_URL}console</a></p>
-                    <p>Veuillez vérifier les logs pour plus de détails.</p>
-                """,
-                mimeType: 'text/html',
-                to: 'kadrilyna7@gmail.com'
-            )
-
-            // Notification Slack
-            slackSend(
-                color: 'danger',
-                message: " Build FAILED: ${env.JOB_NAME} #${env.BUILD_NUMBER}\n<${env.BUILD_URL}|View Build>"
-            )
-        }
     }
 }
