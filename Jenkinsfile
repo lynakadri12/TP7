@@ -102,12 +102,9 @@ pipeline {
                         )
 
                         slackSend(
-                            tokenCredentialId: 'slack-token',
-                            color: 'warning',
-                            message: "Build UNSTABLE: ${env.JOB_NAME} #${env.BUILD_NUMBER}"
+                            color: 'good',
+                            message: "Build SUCCESS: ${env.JOB_NAME} #${env.BUILD_NUMBER}\n<${env.BUILD_URL}|View Build>"
                         )
-
-
 
                     } else if (currentBuild.currentResult == 'UNSTABLE') {
 
@@ -122,12 +119,10 @@ pipeline {
                             to: 'kadrilyna7@gmail.com'
                         )
 
-                       slackSend(
-                           tokenCredentialId: 'slack-token',
-                           color: 'warning',
-                           message: "Build UNSTABLE: ${env.JOB_NAME} #${env.BUILD_NUMBER}"
-                       )
-
+                        slackSend(
+                            color: 'warning',
+                            message: "Build UNSTABLE: ${env.JOB_NAME} #${env.BUILD_NUMBER}"
+                        )
 
                     } else {
 
