@@ -137,7 +137,7 @@ pipeline {
                 """,
                 mimeType: 'text/html',
                 to: 'votre-email@example.com' // Remplacez par votre vraie adresse email
-
+)
             // Notification Slack (optionnel)
             // slackSend(
             //     color: 'danger',
