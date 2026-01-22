@@ -61,7 +61,7 @@ jacocoTestReport {
 publishing {
     repositories {
         maven {
-            url 'https://mymavenrepo.com/repo/ezF0mFwtYfOzZPR2prHo/'
+            url = 'https://mymavenrepo.com/repo/ezF0mFwtYfOzZPR2prHo/'
             credentials {
                 username = 'myMavenRepo'
                 password = '12345'
