@@ -111,7 +111,7 @@ pipeline {
                     <p>Le déploiement a été effectué avec succès sur MyMavenRepo.</p>
                 """,
                 mimeType: 'text/html',
-                to: 'votre-email@example.com' // Remplacez par votre vraie adresse email
+                to: 'kadrilyna7@gmail.com' // Remplacez par votre vraie adresse email
             )
 
             // Notification Slack
@@ -136,7 +136,7 @@ pipeline {
                     <p>Veuillez vérifier les logs pour plus de détails.</p>
                 """,
                 mimeType: 'text/html',
-                to: 'votre-email@example.com' // Remplacez par votre vraie adresse email
+                to: 'kadrilyna7@gmail.com' // Remplacez par votre vraie adresse email
 )
             // Notification Slack (optionnel)
             // slackSend(
